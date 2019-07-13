@@ -1,0 +1,70 @@
+#创建一个CSV文件，创建Name,Value,Description对象，并用管道传递给命令New-Alias 以实现批量的创建别名。
+
+
+
+
+#1，创建CSV 文件命名为Book1.csv，如下：
+Name	Value	Description
+aaa	Write-Information	123
+bbb	Write-Output	124
+ccc	Write-Progress	125
+ddd	Write-Verbose	126
+eee	Write-Warning	127
+fff	Update-AzureRmVmss	128
+ggg	Update-AzureRmVmssInstance	129
+
+
+
+#2，使用PowerShell导入并检查是否正确的导入对象和各个值
+  43 Import-Csv .\Book1.csv | foreach { echo $_}                                                             
+  44 Import-Csv .\Book1.csv | foreach { echo $_.name}                                                        
+  45 Import-Csv .\Book1.csv | foreach { echo $_.value}                                                       
+  46 Import-Csv .\Book1.csv | foreach { echo $_.description}                                                 
+
+#检查对象类型
+PS D:\work\host\script> Import-Csv .\Book1.csv | Get-Member
+
+
+   TypeName: System.Management.Automation.PSCustomObject
+
+Name        MemberType   Definition                    
+----        ----------   ----------                    
+Equals      Method       bool Equals(System.Object obj)
+GetHashCode Method       int GetHashCode()             
+GetType     Method       type GetType()                
+ToString    Method       string ToString()             
+Description NoteProperty string Description=123        
+Name        NoteProperty string Name=aaa               
+Value       NoteProperty string Value=Write-Information
+
+#检查Alias 对象
+PS D:\work\host\script> Get-Help New-Alias -Detailed
+
+NAME
+    New-Alias
+    
+SYNTAX
+    New-Alias [-Name] <string> [-Value] <string> [-Description <string>] [-Option {None | ReadOnly | 
+    Constant | Private | AllScope | Unspecified}] [-PassThru] [-Scope <string>] [-Force] [-WhatIf] 
+    [-Confirm]  [<CommonParameters>]
+#设置别名，使配置生效
+Import-Csv .\Book1.csv | New-Alias     
+
+#检查，是否达到实现目标：
+PS D:\work\host\script> Get-Help aaa
+
+NAME
+    Write-Information
+    
+SYNTAX
+    Write-Information [-MessageData] <Object> [[-Tags] <string[]>]  [<CommonParameters>]
+    
+
+ALIASES
+    aaa
+    
+以上。
+
+
+
+
